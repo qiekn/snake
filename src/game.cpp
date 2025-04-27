@@ -11,131 +11,132 @@
 using namespace snake;
 
 Game::Game() {
-  InitWindow(specs::windowWidth, specs::windowHeight, specs::windowTitle);
-  SetTargetFPS(specs::gameFPS);
+  InitWindow(specs::window_width, specs::window_height, specs::window_title);
+  SetTargetFPS(specs::fps);
   InitAudioDevice();
-  _eatSound = LoadSound(specs::snakeEatSound.string().c_str());
-  _selfCollisionSound = LoadSound(specs::snakeSelfCollision.string().c_str());
-  _wallCollisionSound = LoadSound(specs::snakeWallCollision.string().c_str());
+  eat_sound_ = LoadSound(specs::sanke_eat_sound.string().c_str());
+  self_collision_sound_ =
+      LoadSound(specs::snake_self_collision.string().c_str());
+  wall_collision_sound_ = LoadSound(specs::snakeWallCollision.string().c_str());
 }
 
 Game::~Game() {
-  UnloadSound(_eatSound);
-  UnloadSound(_selfCollisionSound);
-  UnloadSound(_wallCollisionSound);
+  UnloadSound(eat_sound_);
+  UnloadSound(self_collision_sound_);
+  UnloadSound(wall_collision_sound_);
   CloseAudioDevice();
   CloseWindow();
 }
 
 void Game::Run() {
-  _isRunning = true;
-  this->createSnake();
-  this->spawnNewApple();
-  while (!WindowShouldClose() && _isRunning) {
-    this->update();
-    this->Draw();
+  is_running_ = true;
+  CreateSnake();
+  SpawnNewApple();
+  while (!WindowShouldClose() && is_running_) {
+    Update();
+    Draw();
   }
-  if (!WindowShouldClose()) this->Run();
+  if (!WindowShouldClose()) Run();
 }
 
 void Game::Draw() const {
   BeginDrawing();
-  ClearBackground(specs::backgroundColor);
-  _apple.Draw();
-  _snake.Draw();
-  this->displayScore();
+  ClearBackground(specs::backgrond_color);
+  apple_.Draw();
+  snake_.Draw();
+  DisplayScore();
   EndDrawing();
 }
 
-void Game::update() { this->handleSnakeKeyPress(); }
+void Game::Update() { HandleSnakeKeyPress(); }
 
-bool Game::shouldMoveSnake() const {
+bool Game::ShouldMoveSnake() const {
   using namespace std::chrono;
   static time_point prevSnakeMovementTime = high_resolution_clock::now();
   const time_point now = high_resolution_clock::now();
   const milliseconds timePassed =
       duration_cast<milliseconds>(now - prevSnakeMovementTime);
-  if (timePassed >= specs::snakeMoveRate) {
+  if (timePassed >= specs::sanke_move_rate) {
     prevSnakeMovementTime = now;
     return true;
   }
   return false;
 }
 
-void Game::handleSnakeCollision(const Collision collision) {
+void Game::HandleSnakeCollision(const Collision collision) {
   switch (collision) {
     case Collision::Apple:
-      this->spawnNewApple();
-      PlaySound(_eatSound);
+      SpawnNewApple();
+      PlaySound(eat_sound_);
       break;
     case Collision::Self:
-      PlaySound(_selfCollisionSound);
-      this->reset();
+      PlaySound(self_collision_sound_);
+      Reset();
       break;
     case Collision::Wall:
-      PlaySound(_wallCollisionSound);
-      this->reset();
+      PlaySound(wall_collision_sound_);
+      Reset();
       break;
     default:
       break;
   }
 }
 
-void Game::createSnake() {
-  _snake = Snake(utils::generateRandomPosition(
-      specs::cellsPerRow - specs::initialSnakeBodyLength - 1,
-      specs::cellsPerColumn - 1));
+void Game::CreateSnake() {
+  snake_ = Snake(utils::GenerateRandomPosition(
+      specs::cells_per_row - specs::initial_sanke_body_length - 1,
+      specs::cells_per_column - 1));
 }
 
-void Game::spawnNewApple() {
+void Game::SpawnNewApple() {
   Vector2 newApplePosition{};
   do {
-    newApplePosition = utils::generateRandomPosition();
-  } while (_snake.CollidesWith(newApplePosition));
-  _apple = Apple(newApplePosition);
+    newApplePosition = utils::GenerateRandomPosition();
+  } while (snake_.CollidesWith(newApplePosition));
+  apple_ = Apple(newApplePosition);
 }
 
-void Game::reset() {
-  _isRunning = false;
-  _nextSnakeDirection = Direction::None;
+void Game::Reset() {
+  is_running_ = false;
+  next_sanke_direction_ = Direction::None;
 }
 
-int Game::currentGameScore() const {
-  return _snake.SnakeLength() - specs::initialSnakeBodyLength;
+int Game::CurrentGameScore() const {
+  return snake_.SnakeLength() - specs::initial_sanke_body_length;
 }
 
-void Game::displayScore() const {
-  DrawText(TextFormat("score : %d", this->currentGameScore()), specs::cellSize,
-           specs::cellSize, specs::scoreFontSize, specs::scoreColor);
+void Game::DisplayScore() const {
+  DrawText(TextFormat("score : %d", CurrentGameScore()), specs::cell_size,
+           specs::cell_size, specs::score_font_size, specs::score_color);
 }
 
-void Game::handleSnakeKeyPress() {
+void Game::HandleSnakeKeyPress() {
   switch (GetKeyPressed()) {
     case KEY_UP:
     case KEY_W:
     case KEY_K:
-      _nextSnakeDirection = Direction::Up;
+      next_sanke_direction_ = Direction::Up;
       break;
     case KEY_RIGHT:
     case KEY_D:
     case KEY_L:
-      _nextSnakeDirection = Direction::Right;
+      next_sanke_direction_ = Direction::Right;
       break;
     case KEY_DOWN:
     case KEY_S:
     case KEY_J:
-      _nextSnakeDirection = Direction::Down;
+      next_sanke_direction_ = Direction::Down;
       break;
     case KEY_LEFT:
     case KEY_A:
     case KEY_H:
-      _nextSnakeDirection = Direction::Left;
+      next_sanke_direction_ = Direction::Left;
       break;
   }
 
-  if (this->shouldMoveSnake()) {
+  if (ShouldMoveSnake()) {
     const Collision snakeMovementCollision =
-        _snake.Move(_nextSnakeDirection, _apple.GetPosition());
-    this->handleSnakeCollision(snakeMovementCollision);
+        snake_.Move(next_sanke_direction_, apple_.GetPosition());
+    HandleSnakeCollision(snakeMovementCollision);
   }
 }

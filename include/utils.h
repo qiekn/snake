@@ -5,8 +5,8 @@
 
 namespace snake::utils {
 
-bool inBounds(const Vector2 &position);
-Vector2 generateRandomPosition(const int xMax = specs::cellsPerRow - 1,
-                               const int yMax = specs::cellsPerColumn - 1);
+bool InBounds(const Vector2 &position);
+Vector2 GenerateRandomPosition(const int xMax = specs::cells_per_row - 1,
+                               const int yMax = specs::cells_per_column - 1);
 
 }  // namespace snake::utils

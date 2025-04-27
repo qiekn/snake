@@ -23,7 +23,7 @@ bool isPerpDirections(const Direction dirA, const Direction dirB) {
 }  // namespace
 
 Snake::Snake(const Vector2 &initialHeadPosition) {
-  for (std::size_t i = 0; i < specs::initialSnakeBodyLength; ++i) {
+  for (std::size_t i = 0; i < specs::initial_sanke_body_length; ++i) {
     Vector2 bodyPart = initialHeadPosition;
     bodyPart.x += static_cast<float>(i);
     _body.push_back(bodyPart);
@@ -83,7 +83,7 @@ Collision Snake::detectCollision(const Vector2 &applePosition) const {
 
   if (Vector2Equals(headPosition, applePosition)) return Collision::Apple;
 
-  if (!utils::inBounds(headPosition)) return Collision::Wall;
+  if (!utils::InBounds(headPosition)) return Collision::Wall;
 
   const auto collidesWithHead = [&headPosition](const auto &pos) {
     return Vector2Equals(pos, headPosition);
@@ -106,14 +106,14 @@ void Snake::Draw() const {
   constexpr int bodyPartSegments{6};
   for (std::size_t idx = 0; const auto &[x, y] : _body) {
     const Rectangle snakeBodyPart{
-        .x = x * specs::cellSize,
-        .y = y * specs::cellSize,
-        .width = specs::cellSize,
-        .height = specs::cellSize,
+        .x = x * specs::cell_size,
+        .y = y * specs::cell_size,
+        .width = specs::cell_size,
+        .height = specs::cell_size,
     };
-    const Color color = idx == 0                  ? specs::snakeHeadColor
-                        : idx + 1 == _body.size() ? specs::snakeTailColor
-                                                  : specs::snakeColor;
+    const Color color = idx == 0                  ? specs::snake_head_color
+                        : idx + 1 == _body.size() ? specs::snake_tail_color
+                                                  : specs::snake_color;
     DrawRectangleRounded(snakeBodyPart, bodyPartRoundness, bodyPartSegments,
                          color);
     ++idx;

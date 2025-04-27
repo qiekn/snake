@@ -10,29 +10,29 @@ namespace snake {
 class Game : public Drawable {
  public:
   Game();
-  ~Game();
+  virtual ~Game();
   void Run();
 
  private:
   void Draw() const override;
-  void update();
-  bool shouldMoveSnake() const;
-  void handleSnakeCollision(const Collision collision);
-  void handleSnakeKeyPress();
-  void createSnake();
-  void spawnNewApple();
-  void reset();
-  int currentGameScore() const;
-  void displayScore() const;
+  void Update();
+  bool ShouldMoveSnake() const;
+  void HandleSnakeCollision(const Collision collision);
+  void HandleSnakeKeyPress();
+  void CreateSnake();
+  void SpawnNewApple();
+  void Reset();
+  int CurrentGameScore() const;
+  void DisplayScore() const;
 
  private:
-  Apple _apple;
-  Snake _snake;
-  Direction _nextSnakeDirection = Direction::None;
-  Sound _eatSound;
-  Sound _selfCollisionSound;
-  Sound _wallCollisionSound;
-  bool _isRunning = false;
+  Apple apple_;
+  Snake snake_;
+  Direction next_sanke_direction_ = Direction::None;
+  Sound eat_sound_;
+  Sound self_collision_sound_;
+  Sound wall_collision_sound_;
+  bool is_running_ = false;
 };
 
 }  // namespace snake
